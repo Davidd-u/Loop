@@ -2,7 +2,7 @@
 
 import { ExchangeStatus } from "@/types";
 import { MessageCircle } from "lucide-react";
-import { Button } from "@/components/ui/button-custom";
+import { Button } from "@/components/ui/button";
 
 interface ExchangeActionsProps {
   status: ExchangeStatus;

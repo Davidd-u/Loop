@@ -11,8 +11,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card-custom";
-import { Badge } from "@/components/ui/badge-custom";
-import { Button } from "@/components/ui/button-custom";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 interface UserItemCardProps {
   item: ExchangeItem;

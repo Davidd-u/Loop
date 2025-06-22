@@ -2,7 +2,7 @@
 
 import { ExchangeStatus } from "@/types";
 import { CheckCircle, XCircle, Clock } from "lucide-react";
-import { Badge } from "@/components/ui/badge-custom";
+import { Badge } from "@/components/ui/badge";
 
 interface ExchangeStatusBadgeProps {
   status: ExchangeStatus;

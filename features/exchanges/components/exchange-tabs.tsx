@@ -9,7 +9,7 @@ interface ExchangeTabsProps {
 
 ("use client");
 
-import { Badge } from "@/components/ui/badge-custom";
+import { Badge } from "@/components/ui/badge";
 
 interface ExchangeTabsProps {
   activeTab: "sent" | "received";

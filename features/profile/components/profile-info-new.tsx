@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Edit, Camera } from "lucide-react";
 import { User } from "@/types";
 import { Card, CardContent } from "@/components/ui/card-custom";
-import { Button } from "@/components/ui/button-custom";
+import { Button } from "@/components/ui/button";
 import { ProfileAvatar } from "./profile-avatar";
 import { ProfileStats } from "./profile-stats";
 import { ProfileForm } from "./profile-form";

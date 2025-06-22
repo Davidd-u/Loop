@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Filter, MapPin, DollarSign, Package, X } from "lucide-react";
-import { Button } from "@/components/ui/button-custom";
+import { MapPin, DollarSign, Package, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select-simple";
-import { Badge } from "@/components/ui/badge-custom";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card-custom";
 
 interface SearchFiltersProps {
@@ -61,7 +61,6 @@ export function SearchFilters({ onSearch = () => {} }: SearchFiltersProps) {
     maxValue: 10000,
   });
 
-  const [showAdvanced, setShowAdvanced] = useState(false);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
   const updateFilter = (key: keyof SearchFilters, value: string | number) => {
@@ -132,128 +131,101 @@ export function SearchFilters({ onSearch = () => {} }: SearchFiltersProps) {
         {/* Título del panel */}
         <h3 className="text-lg font-semibold mb-4">Filtros de búsqueda</h3>
 
-        {/* Search bar - siempre vertical */}
-        <div className="flex flex-col gap-3 mb-5">
-          <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
-            <Input
-              placeholder="Buscar productos..."
-              value={filters.query}
-              onChange={(e) => updateFilter("query", e.target.value)}
-              className="pl-10 w-full"
-            />
+        {/* Advanced filters - siempre visibles */}
+        <div className="space-y-5 mb-5">
+          {/* Category */}
+          <div className="space-y-2">
+            <label className="flex items-center text-sm font-medium text-gray-700">
+              <Package className="h-4 w-4 mr-2" />
+              Categoría
+            </label>
+            <Select
+              value={filters.category}
+              onChange={(e) => updateFilter("category", e.target.value)}
+              className="w-full">
+              {categories.map((cat) => (
+                <option key={cat.value} value={cat.value}>
+                  {cat.label}
+                </option>
+              ))}
+            </Select>
           </div>
-          <div className="flex gap-2 w-full">
-            <Button onClick={handleSearch} className="flex-1">
-              <Search className="h-4 w-4 mr-2" />
-              Buscar
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setShowAdvanced(!showAdvanced)}
-              className="flex-1"
-            >
-              <Filter className="h-4 w-4 mr-2" />
-              {showAdvanced ? "Ocultar filtros" : "Mostrar filtros"}
-            </Button>
+
+          {/* Condition */}
+          <div className="space-y-2">
+            <label className="flex items-center text-sm font-medium text-gray-700">
+              <Package className="h-4 w-4 mr-2" />
+              Condición
+            </label>
+            <Select
+              value={filters.condition}
+              onChange={(e) => updateFilter("condition", e.target.value)}
+              className="w-full">
+              {conditions.map((cond) => (
+                <option key={cond.value} value={cond.value}>
+                  {cond.label}
+                </option>
+              ))}
+            </Select>
           </div>
-        </div>
 
-        {/* Advanced filters - siempre en columna */}
-        {showAdvanced && (
-          <div className="space-y-5 mb-5">
-            {/* Category */}
-            <div className="space-y-2">
-              <label className="flex items-center text-sm font-medium text-gray-700">
-                <Package className="h-4 w-4 mr-2" />
-                Categoría
-              </label>
-              <Select
-                value={filters.category}
-                onChange={(e) => updateFilter("category", e.target.value)}
-                className="w-full"
-              >
-                {categories.map((cat) => (
-                  <option key={cat.value} value={cat.value}>
-                    {cat.label}
-                  </option>
-                ))}
-              </Select>
-            </div>
+          {/* Location */}
+          <div className="space-y-2">
+            <label className="flex items-center text-sm font-medium text-gray-700">
+              <MapPin className="h-4 w-4 mr-2" />
+              Ubicación
+            </label>
+            <Select
+              value={filters.location}
+              onChange={(e) => updateFilter("location", e.target.value)}
+              className="w-full">
+              {locations.map((loc) => (
+                <option key={loc.value} value={loc.value}>
+                  {loc.label}
+                </option>
+              ))}
+            </Select>
+          </div>
 
-            {/* Condition */}
+          {/* Price range */}
+          <div className="space-y-2">
+            <label className="flex items-center text-sm font-medium text-gray-700">
+              <DollarSign className="h-4 w-4 mr-2" />
+              Rango de precio
+            </label>
             <div className="space-y-2">
-              <label className="flex items-center text-sm font-medium text-gray-700">
-                <Package className="h-4 w-4 mr-2" />
-                Condición
-              </label>
-              <Select
-                value={filters.condition}
-                onChange={(e) => updateFilter("condition", e.target.value)}
-                className="w-full"
-              >
-                {conditions.map((cond) => (
-                  <option key={cond.value} value={cond.value}>
-                    {cond.label}
-                  </option>
-                ))}
-              </Select>
-            </div>
-
-            {/* Location */}
-            <div className="space-y-2">
-              <label className="flex items-center text-sm font-medium text-gray-700">
-                <MapPin className="h-4 w-4 mr-2" />
-                Ubicación
-              </label>
-              <Select
-                value={filters.location}
-                onChange={(e) => updateFilter("location", e.target.value)}
-                className="w-full"
-              >
-                {locations.map((loc) => (
-                  <option key={loc.value} value={loc.value}>
-                    {loc.label}
-                  </option>
-                ))}
-              </Select>
-            </div>
-
-            {/* Price range */}
-            <div className="space-y-2">
-              <label className="flex items-center text-sm font-medium text-gray-700">
-                <DollarSign className="h-4 w-4 mr-2" />
-                Rango de precio
-              </label>
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <span className="text-xs text-gray-500 w-10">Mínimo:</span>
-                  <Input
-                    type="number"
-                    placeholder="Min"
-                    value={filters.minValue}
-                    onChange={(e) =>
-                      updateFilter("minValue", parseInt(e.target.value) || 0)
-                    }
-                    className="text-sm"
-                  />
-                </div>
-                <div className="flex items-center">
-                  <span className="text-xs text-gray-500 w-10">Máximo:</span>
-                  <Input
-                    type="number"
-                    placeholder="Max"
-                    value={filters.maxValue}
-                    onChange={(e) =>
-                      updateFilter("maxValue", parseInt(e.target.value) || 10000)
-                    }
-                    className="text-sm"
-                  />
-                </div>
+              <div className="flex items-center">
+                <span className="text-xs text-gray-500 w-10">Mínimo:</span>
+                <Input
+                  type="number"
+                  placeholder="Min"
+                  value={filters.minValue}
+                  onChange={(e) =>
+                    updateFilter("minValue", parseInt(e.target.value) || 0)
+                  }
+                  className="text-sm"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-xs text-gray-500 w-10">Máximo:</span>
+                <Input
+                  type="number"
+                  placeholder="Max"
+                  value={filters.maxValue}
+                  onChange={(e) =>
+                    updateFilter("maxValue", parseInt(e.target.value) || 10000)
+                  }
+                  className="text-sm"
+                />
               </div>
             </div>
           </div>
-        )}
+        </div>
+
+        {/* Botón para aplicar filtros */}
+        <Button onClick={handleSearch} className="w-full mb-5">
+          Aplicar filtros
+        </Button>
 
         {/* Active filters - adaptado para formato vertical */}
         {activeFilters.length > 0 && (
@@ -273,8 +245,7 @@ export function SearchFilters({ onSearch = () => {} }: SearchFiltersProps) {
                   key={index}
                   variant="secondary"
                   className="cursor-pointer hover:bg-red-100 hover:text-red-700 group w-full justify-between py-1.5"
-                  onClick={() => removeFilter(filter)}
-                >
+                  onClick={() => removeFilter(filter)}>
                   <span className="truncate">{filter}</span>
                   <X className="h-3 w-3 ml-1 flex-shrink-0 group-hover:text-red-600" />
                 </Badge>

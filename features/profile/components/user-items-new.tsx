@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ExchangeItem, ItemStatus, ItemCondition } from "@/types";
 import { Card, CardContent, CardHeader } from "@/components/ui/card-custom";
-import { Button } from "@/components/ui/button-custom";
+import { Button } from "@/components/ui/button";
 import { ItemTabs } from "./item-tabs";
 import { UserItemCard } from "./user-item-card";
 

@@ -4,8 +4,8 @@ import { useState } from "react";
 import { ExchangeItem, ItemCondition } from "@/types";
 import { Heart, MapPin, Clock, Star } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card-custom";
-import { Badge } from "@/components/ui/badge-custom";
-import { Button } from "@/components/ui/button-custom";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface ProductCardProps {
@@ -151,7 +151,7 @@ export function ProductCard({
           </div>
           <div className="flex items-center">
             <Clock className="h-3 w-3 mr-1" />
-            {formatTimeAgo(item.createdAt)}
+            {formatTimeAgo(new Date(item.createdAt))}
           </div>
         </div>{" "}
         {/* Items deseados */}
