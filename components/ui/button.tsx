@@ -22,6 +22,7 @@ const buttonVariants = cva(
           "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg hover:shadow-xl hover:from-green-600 hover:to-green-700",
         warning:
           "bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg hover:shadow-xl hover:from-yellow-600 hover:to-orange-600",
+        black: "bg-black text-white hover:bg-neutral-800",
       },
       size: {
         default: "h-11 px-6 py-2",

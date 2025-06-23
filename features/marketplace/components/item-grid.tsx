@@ -52,7 +52,15 @@ export function ItemGrid() {
         onSortChange={handleSortChange}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div
+        className="
+          grid
+          grid-cols-[repeat(auto-fit,minmax(160px,1fr))]
+          auto-rows-fr
+          gap-x-3
+          gap-y-6
+          w-full
+        ">
         {loading ? (
           <div className="col-span-full text-center text-gray-400 py-12">
             Cargando productos...
@@ -67,7 +75,7 @@ export function ItemGrid() {
               key={item.id}
               item={{
                 ...item,
-                images: [],
+                images: item.images, // Asegura que images esté presente
                 category: { id: "", name: "", slug: "", icon: "" },
                 userId: item.user.id,
                 updatedAt: new Date(item.createdAt),
@@ -100,6 +108,7 @@ export function ItemGrid() {
               onToggleFavorite={toggleFavorite}
               onViewDetails={handleViewDetails}
               onProposeExchange={handleProposeExchange}
+              // Asegúrate de que ProductCard soporte className/h-full si es necesario
             />
           ))
         )}

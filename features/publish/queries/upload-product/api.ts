@@ -9,8 +9,10 @@ export async function uploadProduct(data: UploadProductParams) {
   formData.append("estimatedValue", data.estimatedValue);
   formData.append("location", data.location);
   formData.append("desiredItems", data.desiredItems.join(","));
-  if (data.image) {
-    formData.append("image", data.image);
+  if (data.images && data.images.length > 0) {
+    data.images.forEach((file) => {
+      formData.append("image", file);
+    });
   }
   const res = await fetch("/api/products", {
     method: "POST",

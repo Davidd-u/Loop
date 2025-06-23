@@ -6,5 +6,5 @@ export interface UploadProductParams {
   estimatedValue: string;
   location: string;
   desiredItems: string[];
-  image?: File | null;
+  images?: File[]; // Cambia de image?: File | null a images?: File[]
 }

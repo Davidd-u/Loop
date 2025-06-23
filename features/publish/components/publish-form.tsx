@@ -42,7 +42,7 @@ export function PublishForm() {
   });
 
   const [currentDesiredItem, setCurrentDesiredItem] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const uploadMutation = useUploadProduct();
 
   const categories = [
@@ -89,21 +89,19 @@ export function PublishForm() {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setImageFile(file);
-    if (file) {
-      setFormData((prev) => ({
-        ...prev,
-        images: [URL.createObjectURL(file)],
-      }));
-    }
+    const files = Array.from(e.target.files ?? []);
+    setImageFiles(files);
+    setFormData((prev) => ({
+      ...prev,
+      images: files.map((file) => URL.createObjectURL(file)),
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     uploadMutation.mutate({
       ...formData,
-      image: imageFile,
+      images: imageFiles, // Pasa todas las imágenes seleccionadas
     });
   };
 
@@ -131,10 +129,13 @@ export function PublishForm() {
               {/* Placeholder para subir fotos */}
               <Label className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-gray-400 cursor-pointer p-0">
                 <Camera className="mx-auto h-8 w-8 text-gray-400" />
-                <span className="mt-2 text-sm text-gray-500">Agregar foto</span>
+                <span className="mt-2 text-sm text-gray-500">
+                  Agregar fotos
+                </span>
                 <Input
                   type="file"
                   accept="image/*"
+                  multiple
                   className="hidden"
                   onChange={handleImageChange}
                 />
@@ -159,9 +160,11 @@ export function PublishForm() {
                     onClick={() => {
                       setFormData((prev) => ({
                         ...prev,
-                        images: [],
+                        images: prev.images.filter((_, i) => i !== index),
                       }));
-                      setImageFile(null);
+                      setImageFiles((prev) =>
+                        prev.filter((_, i) => i !== index)
+                      );
                     }}>
                     <X className="h-3 w-3" />
                   </Button>

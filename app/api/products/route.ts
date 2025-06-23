@@ -1,27 +1,26 @@
+import { productsDb } from "@/db";
+import { products } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
+import { randomUUID } from "crypto";
 import { promises as fs } from "fs";
 import path from "path";
-import { randomUUID } from "crypto";
 
-const DATA_FILE = path.join(process.cwd(), "products.json");
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
-
-async function readProducts() {
-  try {
-    const data = await fs.readFile(DATA_FILE, "utf-8");
-    return JSON.parse(data);
-  } catch {
-    return [];
-  }
-}
-
-async function writeProducts(products: any[]) {
-  await fs.writeFile(DATA_FILE, JSON.stringify(products, null, 2), "utf-8");
-}
+// Carpeta para imágenes de productos
+const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "products");
 
 export async function GET() {
-  const products = await readProducts();
-  return NextResponse.json(products);
+  const result = await productsDb.select().from(products).all();
+  const parsed = result.map((p) => ({
+    ...p,
+    desiredItems: p.desiredItems ? JSON.parse(p.desiredItems) : [],
+    images: p.images ? JSON.parse(p.images) : [],
+    location: {
+      city: p.locationCity,
+      state: p.locationState || "",
+      country: p.locationCountry || "",
+    },
+  }));
+  return NextResponse.json(parsed);
 }
 
 export async function POST(req: NextRequest) {
@@ -33,14 +32,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // @ts-ignore
   const formData = await req.formData();
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const category = formData.get("category") as string;
   const condition = formData.get("condition") as string;
   const estimatedValue = Number(formData.get("estimatedValue"));
-  const locationStr = formData.get("location") as string;
+  const locationCity = formData.get("location") as string;
   const desiredItems =
     (formData.get("desiredItems") as string)?.split(",") ?? [];
 
@@ -53,23 +51,15 @@ export async function POST(req: NextRequest) {
       if (imageFile && imageFile.size > 0) {
         const ext = path.extname(imageFile.name) || ".jpg";
         const filename = `${randomUUID()}${ext}`;
-        const buffer = Buffer.from(await imageFile.arrayBuffer());
         const filePath = path.join(UPLOAD_DIR, filename);
+        const buffer = Buffer.from(await imageFile.arrayBuffer());
         await fs.writeFile(filePath, buffer);
-        images.push(`/uploads/${filename}`);
+        // Siempre guarda la ruta pública
+        images.push(`/uploads/products/${filename}`);
       }
     }
   }
 
-  // Guardar location como objeto
-  const location = {
-    id: randomUUID(),
-    city: locationStr,
-    state: "",
-    country: "",
-  };
-
-  const products = await readProducts();
   const newProduct = {
     id: randomUUID(),
     title,
@@ -77,12 +67,23 @@ export async function POST(req: NextRequest) {
     category,
     condition,
     estimatedValue,
-    location,
-    desiredItems,
-    images,
+    locationCity,
+    locationState: "",
+    locationCountry: "",
+    desiredItems: JSON.stringify(desiredItems),
+    images: JSON.stringify(images),
     createdAt: new Date().toISOString(),
   };
-  products.unshift(newProduct);
-  await writeProducts(products);
-  return NextResponse.json(newProduct, { status: 201 });
+
+  await productsDb.insert(products).values(newProduct);
+
+  return NextResponse.json(
+    {
+      ...newProduct,
+      desiredItems,
+      images,
+      location: { city: locationCity, state: "", country: "" },
+    },
+    { status: 201 }
+  );
 }
