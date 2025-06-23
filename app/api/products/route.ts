@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
   let formData: FormData;
   try {
     formData = await req.formData();
-  } catch (err) {
+  } catch {
     return NextResponse.json(
       { error: "No se pudo leer el formulario" },
       { status: 400 }
@@ -73,9 +73,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Limpiar desiredItems para evitar strings vacíos
   const desiredItems =
     desiredItemsRaw && typeof desiredItemsRaw === "string"
-      ? desiredItemsRaw.split(",")
+      ? desiredItemsRaw
+          .split(",")
+          .map((i) => i.trim())
+          .filter((i) => i)
       : [];
 
   // Manejar múltiples imágenes
@@ -84,13 +88,18 @@ export async function POST(req: NextRequest) {
   if (imageFiles && imageFiles.length > 0) {
     await fs.mkdir(UPLOAD_DIR, { recursive: true });
     for (const imageFile of imageFiles) {
-      if (imageFile && imageFile.size > 0 && imageFile.name) {
+      if (
+        imageFile &&
+        imageFile.size > 0 &&
+        imageFile.name &&
+        // Validar tipo de archivo (opcional)
+        (imageFile.type.startsWith("image/") || imageFile.type === "")
+      ) {
         const ext = path.extname(imageFile.name) || ".jpg";
         const filename = `${randomUUID()}${ext}`;
         const filePath = path.join(UPLOAD_DIR, filename);
         const buffer = Buffer.from(await imageFile.arrayBuffer());
         await fs.writeFile(filePath, buffer);
-        // Siempre guarda la ruta pública
         images.push(`/uploads/products/${filename}`);
       }
     }
@@ -104,14 +113,21 @@ export async function POST(req: NextRequest) {
     condition,
     estimatedValue,
     locationCity,
-    locationState: "",
+    locationState: "", // Si quieres recibir estos campos, obténlos del formData
     locationCountry: "",
     desiredItems: JSON.stringify(desiredItems),
     images: JSON.stringify(images),
     createdAt: new Date().toISOString(),
   };
 
-  await productsDb.insert(products).values(newProduct);
+  try {
+    await productsDb.insert(products).values(newProduct);
+  } catch (e) {
+    return NextResponse.json(
+      { error: "Error al guardar en la base de datos" },
+      { status: 500 }
+    );
+  }
 
   return NextResponse.json(
     {
