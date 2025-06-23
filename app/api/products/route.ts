@@ -8,11 +8,6 @@ import path from "path";
 // Carpeta para imágenes de productos
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "products");
 
-// Validar que la URL de la base de datos esté definida
-if (!process.env.DATABASE_URL) {
-  throw new Error("La variable de entorno DATABASE_URL no está definida");
-}
-
 export async function GET() {
   const result = await productsDb.select().from(products).all();
   const parsed = result.map((p) => ({
