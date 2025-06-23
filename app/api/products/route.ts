@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
 
   try {
     await productsDb.insert(products).values(newProduct);
-  } catch (e) {
+  } catch {
     return NextResponse.json(
       { error: "Error al guardar en la base de datos" },
       { status: 500 }
