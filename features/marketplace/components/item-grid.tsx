@@ -6,6 +6,7 @@ import { ProductGridHeader } from "./product-grid-header";
 import { LoadMoreButton } from "./load-more-button";
 import { useProducts } from "../queries/use-products";
 import { Product } from "../types/product";
+import { ItemStatus, ItemCondition, Location } from "@/types";
 
 export function ItemGrid() {
   const { products, loading } = useProducts();
@@ -66,12 +67,34 @@ export function ItemGrid() {
               key={item.id}
               item={{
                 ...item,
-                // Adaptación mínima para compatibilidad con ProductCard
                 images: [],
                 category: { id: "", name: "", slug: "", icon: "" },
                 userId: item.user.id,
                 updatedAt: new Date(item.createdAt),
-                status: "available",
+                status: ItemStatus.AVAILABLE,
+                condition: item.condition as ItemCondition,
+                user: {
+                  id: item.user.id,
+                  name: item.user.name,
+                  email: "",
+                  avatar: "",
+                  location: {
+                    id: "",
+                    city: item.location.city ?? "",
+                    state: item.location.state ?? "",
+                    country: "",
+                  },
+                  rating: item.user.rating,
+                  totalExchanges: item.user.totalExchanges,
+                  joinedAt: new Date(),
+                },
+                location: {
+                  id: "",
+                  city: item.location.city ?? "",
+                  state: item.location.state ?? "",
+                  country: "",
+                },
+                createdAt: new Date(item.createdAt),
               }}
               isFavorite={favorites.has(item.id)}
               onToggleFavorite={toggleFavorite}

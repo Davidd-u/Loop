@@ -1,16 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Bell, MessageCircle, Plus, User, Menu, X, Search } from "lucide-react";
+import { Bell, MessageCircle, User, Menu, X, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
+
 import { PublishDialog } from "@/features/publish/components/publish-dialog";
 
 export function Header() {

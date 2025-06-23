@@ -104,8 +104,7 @@ export function PublishForm() {
               <Button
                 type="button"
                 variant="outline"
-                className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-gray-400 cursor-pointer p-0"
-              >
+                className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-gray-400 cursor-pointer p-0">
                 <Camera className="mx-auto h-8 w-8 text-gray-400" />
                 <span className="mt-2 text-sm text-gray-500">Agregar foto</span>
               </Button>
@@ -114,8 +113,7 @@ export function PublishForm() {
               {formData.images.map((image, index) => (
                 <div
                   key={index}
-                  className="aspect-square relative bg-gray-100 rounded-lg"
-                >
+                  className="aspect-square relative bg-gray-100 rounded-lg">
                   <Button
                     type="button"
                     size="icon"
@@ -126,8 +124,7 @@ export function PublishForm() {
                         ...prev,
                         images: prev.images.filter((_, i) => i !== index),
                       }));
-                    }}
-              >
+                    }}>
                     <X className="h-3 w-3" />
                   </Button>
                 </div>
@@ -142,8 +139,7 @@ export function PublishForm() {
           <div>
             <label
               htmlFor="title"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+              className="block text-sm font-medium text-gray-700 mb-2">
               Título del producto *
             </label>
             <Input
@@ -164,8 +160,7 @@ export function PublishForm() {
           <div>
             <label
               htmlFor="description"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+              className="block text-sm font-medium text-gray-700 mb-2">
               Descripción *
             </label>
             <Textarea
@@ -189,14 +184,12 @@ export function PublishForm() {
           <div>
             <label
               htmlFor="category"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+              className="block text-sm font-medium text-gray-700 mb-2">
               Categoría *
             </label>
             <Select
               value={formData.category}
-              onValueChange={(value) => handleInputChange("category", value)}
-            >
+              onValueChange={(value) => handleInputChange("category", value)}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Selecciona una categoría" />
               </SelectTrigger>
@@ -214,14 +207,12 @@ export function PublishForm() {
           <div>
             <label
               htmlFor="condition"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+              className="block text-sm font-medium text-gray-700 mb-2">
               Condición *
             </label>
             <Select
               value={formData.condition}
-              onValueChange={(value) => handleInputChange("condition", value)}
-            >
+              onValueChange={(value) => handleInputChange("condition", value)}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Selecciona la condición" />
               </SelectTrigger>
@@ -239,8 +230,7 @@ export function PublishForm() {
           <div>
             <label
               htmlFor="estimatedValue"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+              className="block text-sm font-medium text-gray-700 mb-2">
               Valor estimado (USD) *
             </label>
             <Input
@@ -263,8 +253,7 @@ export function PublishForm() {
           <div>
             <label
               htmlFor="location"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+              className="block text-sm font-medium text-gray-700 mb-2">
               Ubicación *
             </label>
             <div className="relative">
@@ -301,8 +290,7 @@ export function PublishForm() {
                 type="button"
                 onClick={addDesiredItem}
                 className="flex items-center"
-                variant="default"
-              >
+                variant="default">
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
@@ -312,16 +300,14 @@ export function PublishForm() {
                 {formData.desiredItems.map((item, index) => (
                   <Badge
                     key={index}
-                    className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full"
-                  >
+                    className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
                     {item}
                     <Button
                       type="button"
                       size="icon"
                       variant="ghost"
                       onClick={() => removeDesiredItem(item)}
-                      className="ml-1 h-5 w-5 p-0"
-                    >
+                      className="ml-1 h-5 w-5 p-0">
                       <X className="h-3 w-3" />
                     </Button>
                   </Badge>

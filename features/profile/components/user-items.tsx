@@ -334,6 +334,7 @@ export function UserItems() {
       </div>
 
       {/* Overlay para cerrar menú */}
+
       {showMenu && (
         <div className="fixed inset-0 z-5" onClick={() => setShowMenu(null)} />
       )}

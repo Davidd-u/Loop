@@ -1,6 +1,12 @@
 "use client";
 
-import { Select } from "@/components/ui/select-simple";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ProductGridHeaderProps {
   totalCount: number;
@@ -14,7 +20,7 @@ export function ProductGridHeader({
   onSortChange,
 }: ProductGridHeaderProps) {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       <div className="space-y-1">
         <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
           Productos disponibles
@@ -26,16 +32,18 @@ export function ProductGridHeader({
 
       <div className="flex items-center space-x-3">
         <span className="text-sm font-medium text-gray-700">Ordenar por:</span>
-        <Select
-          value={sortValue}
-          onChange={(e) => onSortChange(e.target.value)}
-          className="w-48">
-          <option value="newest">Más recientes</option>
-          <option value="oldest">Más antiguos</option>
-          <option value="highest-value">Mayor valor</option>
-          <option value="lowest-value">Menor valor</option>
-          <option value="nearest">Más cercanos</option>
-          <option value="most-viewed">Más vistos</option>
+        <Select value={sortValue} onValueChange={onSortChange}>
+          <SelectTrigger className="w-48" aria-label="Ordenar por">
+            <SelectValue placeholder="Más recientes" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="newest">Más recientes</SelectItem>
+            <SelectItem value="oldest">Más antiguos</SelectItem>
+            <SelectItem value="highest-value">Mayor valor</SelectItem>
+            <SelectItem value="lowest-value">Menor valor</SelectItem>
+            <SelectItem value="nearest">Más cercanos</SelectItem>
+            <SelectItem value="most-viewed">Más vistos</SelectItem>
+          </SelectContent>
         </Select>
       </div>
     </div>
