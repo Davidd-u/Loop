@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AppProviders } from "@/lib/providers";
 
 export const metadata: Metadata = {
   title: "Loop - Marketplace de Intercambios",
@@ -13,8 +14,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
-      <body className={` antialiased`}>{children}</body>
+    <html lang="es" suppressHydrationWarning>
+      <body className="antialiased">
+        <AppProviders>{children}</AppProviders>
+      </body>
     </html>
   );
 }

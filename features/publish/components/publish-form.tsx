@@ -14,6 +14,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import Image from "next/image";
+import { useUploadProduct } from "../queries/use-upload-product";
 
 interface FormData {
   title: string;
@@ -39,6 +42,8 @@ export function PublishForm() {
   });
 
   const [currentDesiredItem, setCurrentDesiredItem] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const uploadMutation = useUploadProduct();
 
   const categories = [
     { id: "1", name: "Electrónicos", slug: "electronics" },
@@ -83,11 +88,36 @@ export function PublishForm() {
     }));
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setImageFile(file);
+    if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        images: [URL.createObjectURL(file)],
+      }));
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Publicar producto:", formData);
-    // Aquí se enviaría a la API
+    uploadMutation.mutate({
+      ...formData,
+      image: imageFile,
+    });
   };
+
+  const categoriesItems = categories.map((category) => (
+    <SelectItem key={category.id} value={category.id}>
+      {category.name}
+    </SelectItem>
+  ));
+
+  const conditionsItems = conditions.map((condition) => (
+    <SelectItem key={condition.value} value={condition.value}>
+      {condition.label}
+    </SelectItem>
+  ));
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
@@ -96,24 +126,31 @@ export function PublishForm() {
         <div className="space-y-6">
           {/* Imágenes */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Fotos del producto
-            </label>
+            <Label className="mb-2">Fotos del producto</Label>
             <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
               {/* Placeholder para subir fotos */}
-              <Button
-                type="button"
-                variant="outline"
-                className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-gray-400 cursor-pointer p-0">
+              <Label className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-gray-400 cursor-pointer p-0">
                 <Camera className="mx-auto h-8 w-8 text-gray-400" />
                 <span className="mt-2 text-sm text-gray-500">Agregar foto</span>
-              </Button>
-
+                <Input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
+              </Label>
               {/* Mostrar imágenes subidas */}
               {formData.images.map((image, index) => (
                 <div
                   key={index}
                   className="aspect-square relative bg-gray-100 rounded-lg">
+                  <Image
+                    src={image}
+                    alt="preview"
+                    fill
+                    className="object-cover rounded-lg"
+                    style={{ objectFit: "cover" }}
+                  />
                   <Button
                     type="button"
                     size="icon"
@@ -122,8 +159,9 @@ export function PublishForm() {
                     onClick={() => {
                       setFormData((prev) => ({
                         ...prev,
-                        images: prev.images.filter((_, i) => i !== index),
+                        images: [],
                       }));
+                      setImageFile(null);
                     }}>
                     <X className="h-3 w-3" />
                   </Button>
@@ -131,17 +169,15 @@ export function PublishForm() {
               ))}
             </div>
             <p className="text-xs text-gray-500 mt-1">
-              Puedes subir hasta 8 fotos. La primera será la foto principal.
+              Puedes subir una foto. La primera será la foto principal.
             </p>
           </div>
 
           {/* Título */}
           <div>
-            <label
-              htmlFor="title"
-              className="block text-sm font-medium text-gray-700 mb-2">
+            <Label htmlFor="title" className="mb-2">
               Título del producto *
-            </label>
+            </Label>
             <Input
               type="text"
               id="title"
@@ -158,11 +194,9 @@ export function PublishForm() {
 
           {/* Descripción */}
           <div>
-            <label
-              htmlFor="description"
-              className="block text-sm font-medium text-gray-700 mb-2">
+            <Label htmlFor="description" className="mb-2">
               Descripción *
-            </label>
+            </Label>
             <Textarea
               id="description"
               required
@@ -182,57 +216,39 @@ export function PublishForm() {
         <div className="space-y-6">
           {/* Categoría */}
           <div>
-            <label
-              htmlFor="category"
-              className="block text-sm font-medium text-gray-700 mb-2">
+            <Label htmlFor="category" className="mb-2">
               Categoría *
-            </label>
+            </Label>
             <Select
               value={formData.category}
               onValueChange={(value) => handleInputChange("category", value)}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Selecciona una categoría" />
               </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
+              <SelectContent>{categoriesItems}</SelectContent>
             </Select>
           </div>
 
           {/* Condición */}
           <div>
-            <label
-              htmlFor="condition"
-              className="block text-sm font-medium text-gray-700 mb-2">
+            <Label htmlFor="condition" className="mb-2">
               Condición *
-            </label>
+            </Label>
             <Select
               value={formData.condition}
               onValueChange={(value) => handleInputChange("condition", value)}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Selecciona la condición" />
               </SelectTrigger>
-              <SelectContent>
-                {conditions.map((condition) => (
-                  <SelectItem key={condition.value} value={condition.value}>
-                    {condition.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
+              <SelectContent>{conditionsItems}</SelectContent>
             </Select>
           </div>
 
           {/* Valor estimado */}
           <div>
-            <label
-              htmlFor="estimatedValue"
-              className="block text-sm font-medium text-gray-700 mb-2">
+            <Label htmlFor="estimatedValue" className="mb-2">
               Valor estimado (USD) *
-            </label>
+            </Label>
             <Input
               type="number"
               id="estimatedValue"
@@ -251,11 +267,9 @@ export function PublishForm() {
 
           {/* Ubicación */}
           <div>
-            <label
-              htmlFor="location"
-              className="block text-sm font-medium text-gray-700 mb-2">
+            <Label htmlFor="location" className="mb-2">
               Ubicación *
-            </label>
+            </Label>
             <div className="relative">
               <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
@@ -272,9 +286,7 @@ export function PublishForm() {
 
           {/* Items deseados */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              ¿Qué te interesa recibir a cambio?
-            </label>
+            <Label className="mb-2">¿Qué te interesa recibir a cambio?</Label>
             <div className="flex gap-2 mb-2">
               <Input
                 type="text"
