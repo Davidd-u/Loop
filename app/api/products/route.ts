@@ -32,15 +32,51 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const formData = await req.formData();
-  const title = formData.get("title") as string;
-  const description = formData.get("description") as string;
-  const category = formData.get("category") as string;
-  const condition = formData.get("condition") as string;
-  const estimatedValue = Number(formData.get("estimatedValue"));
-  const locationCity = formData.get("location") as string;
+  let formData: FormData;
+  try {
+    formData = await req.formData();
+  } catch (err) {
+    return NextResponse.json(
+      { error: "No se pudo leer el formulario" },
+      { status: 400 }
+    );
+  }
+
+  const title = formData.get("title") as string | null;
+  const description = formData.get("description") as string | null;
+  const category = formData.get("category") as string | null;
+  const condition = formData.get("condition") as string | null;
+  const estimatedValueRaw = formData.get("estimatedValue");
+  const locationCity = formData.get("location") as string | null;
+  const desiredItemsRaw = formData.get("desiredItems") as string | null;
+
+  // Validar campos requeridos
+  if (
+    !title ||
+    !description ||
+    !category ||
+    !condition ||
+    !estimatedValueRaw ||
+    !locationCity
+  ) {
+    return NextResponse.json(
+      { error: "Faltan campos requeridos" },
+      { status: 400 }
+    );
+  }
+
+  const estimatedValue = Number(estimatedValueRaw);
+  if (isNaN(estimatedValue)) {
+    return NextResponse.json(
+      { error: "El valor estimado no es un número válido" },
+      { status: 400 }
+    );
+  }
+
   const desiredItems =
-    (formData.get("desiredItems") as string)?.split(",") ?? [];
+    desiredItemsRaw && typeof desiredItemsRaw === "string"
+      ? desiredItemsRaw.split(",")
+      : [];
 
   // Manejar múltiples imágenes
   const images: string[] = [];
@@ -48,7 +84,7 @@ export async function POST(req: NextRequest) {
   if (imageFiles && imageFiles.length > 0) {
     await fs.mkdir(UPLOAD_DIR, { recursive: true });
     for (const imageFile of imageFiles) {
-      if (imageFile && imageFile.size > 0) {
+      if (imageFile && imageFile.size > 0 && imageFile.name) {
         const ext = path.extname(imageFile.name) || ".jpg";
         const filename = `${randomUUID()}${ext}`;
         const filePath = path.join(UPLOAD_DIR, filename);
